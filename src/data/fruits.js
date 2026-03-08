@@ -1,0 +1,17 @@
+export const FRUITS = [
+  { name: 'pomme', emoji: '\u{1F34E}', alt: ['la pomme', 'une pomme'] },
+  { name: 'banane', emoji: '\u{1F34C}', alt: ['la banane', 'une banane'] },
+  { name: 'fraise', emoji: '\u{1F353}', alt: ['la fraise', 'une fraise'] },
+  { name: 'orange', emoji: '\u{1F34A}', alt: ["l'orange", 'une orange'] },
+  { name: 'raisin', emoji: '\u{1F347}', alt: ['le raisin', 'du raisin', 'des raisins'] },
+  { name: 'cerise', emoji: '\u{1F352}', alt: ['la cerise', 'une cerise', 'cerises'] },
+  { name: 'past\u00e8que', emoji: '\u{1F349}', alt: ['la past\u00e8que', 'une past\u00e8que', 'pasteque'] },
+  { name: 'citron', emoji: '\u{1F34B}', alt: ['le citron', 'un citron'] },
+  { name: 'poire', emoji: '\u{1F350}', alt: ['la poire', 'une poire'] },
+  { name: 'carotte', emoji: '\u{1F955}', alt: ['la carotte', 'une carotte'] },
+  { name: 'tomate', emoji: '\u{1F345}', alt: ['la tomate', 'une tomate'] },
+  { name: 'brocoli', emoji: '\u{1F966}', alt: ['le brocoli', 'un brocoli', 'du brocoli'] },
+  { name: 'ma\u00efs', emoji: '\u{1F33D}', alt: ['le ma\u00efs', 'du ma\u00efs', 'mais'] },
+  { name: 'aubergine', emoji: '\u{1F346}', alt: ["l'aubergine", 'une aubergine'] },
+  { name: 'champignon', emoji: '\u{1F344}', alt: ['le champignon', 'un champignon'] },
+]

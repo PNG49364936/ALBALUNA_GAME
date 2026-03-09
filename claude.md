@@ -16,6 +16,8 @@ A chaque ouverture de l'app,  le compteur "nombre de questions" et "score se rem
 - ElevenLabs ou Google Cloud Text-to-Speech (pour les voix) (Web Speech API  est un peu basique)
 - envisager React + Vite si nécessaire
 
+- NETLIFY + https://dancing-khapse-23b273.netlify.app/
+
 #### Front end.
   
 le style de l'app avec code source ci-dessous est OK

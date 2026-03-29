@@ -6,7 +6,7 @@ import Feedback from '../components/Feedback'
 import Fireworks from '../components/Fireworks'
 import ColorDisplay from '../components/ColorDisplay'
 import EmojiDisplay from '../components/EmojiDisplay'
-import { useSpeechRecognition, speak } from '../hooks/useSpeech'
+import { useSpeechRecognition, speak, useIsSpeaking } from '../hooks/useSpeech'
 import { useSound } from '../hooks/useSound'
 import { COLORS } from '../data/colors'
 import { ANIMALS } from '../data/animals'
@@ -73,6 +73,7 @@ export default function GameScreen({ category, onBack }) {
 
   const { isListening, listen, stop, isSupported } = useSpeechRecognition()
   const { playCorrect, playWrong, playClick, playReveal } = useSound()
+  const isSpeaking = useIsSpeaking()
 
   const prevItemRef = useRef(null)
 
@@ -127,9 +128,10 @@ export default function GameScreen({ category, onBack }) {
   }, [currentItem, attempts, playCorrect, playWrong, playReveal, nextRound])
 
   const handleMicClick = useCallback(() => {
+    if (isSpeaking) return
     playClick()
     listen(handleResult)
-  }, [playClick, listen, handleResult])
+  }, [isSpeaking, playClick, listen, handleResult])
 
   // Speak question on first mount
   useEffect(() => {
@@ -210,7 +212,7 @@ export default function GameScreen({ category, onBack }) {
       {/* Fixed bottom: Mic at 1.5cm from bottom, Back at 0.5cm from bottom */}
       <div className="w-full flex flex-col items-center shrink-0" style={{ paddingBottom: '0.5cm' }}>
         <div style={{ marginBottom: '1.5cm' }}>
-          <MicButton isListening={isListening} onClick={handleMicClick} />
+          <MicButton isListening={isListening} disabled={isSpeaking} onClick={handleMicClick} />
         </div>
         <div style={{ marginBottom: '0.5cm' }}>
           <ScoreBar score={score} questionNum={questionNum} />

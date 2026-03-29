@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useSyncExternalStore } from 'react'
 
 const ELEVENLABS_API_KEY = import.meta.env.VITE_ELEVENLABS_API_KEY
 const VOICE_ID = 'XB0fDUnXU5powFXDhCwa' // Charlotte - voix feminine douce
@@ -7,6 +7,28 @@ const MODEL_ID = 'eleven_multilingual_v2'
 // Cache audio pour eviter de re-generer les memes phrases
 const audioCache = new Map()
 let currentAudio = null
+
+// --- Speaking state tracking ---
+let _isSpeaking = false
+const _speakingListeners = new Set()
+
+function setSpeaking(val) {
+  _isSpeaking = val
+  _speakingListeners.forEach(fn => fn())
+}
+
+function subscribeSpeaking(listener) {
+  _speakingListeners.add(listener)
+  return () => _speakingListeners.delete(listener)
+}
+
+function getSpeakingSnapshot() {
+  return _isSpeaking
+}
+
+export function useIsSpeaking() {
+  return useSyncExternalStore(subscribeSpeaking, getSpeakingSnapshot)
+}
 
 export function useSpeechRecognition() {
   const [isListening, setIsListening] = useState(false)
@@ -69,13 +91,21 @@ export async function speak(text, callback) {
     currentAudio = null
   }
 
+  setSpeaking(true)
+
+  const onDone = () => {
+    setSpeaking(false)
+    callback?.()
+  }
+
   // Si pas de cle API, fallback sur Web Speech API
   if (!ELEVENLABS_API_KEY) {
     const u = new SpeechSynthesisUtterance(text)
     u.lang = 'fr-FR'
     u.rate = 0.85
     u.pitch = 1.1
-    u.onend = callback || null
+    u.onend = onDone
+    u.onerror = onDone
     speechSynthesis.cancel()
     speechSynthesis.speak(u)
     return
@@ -114,11 +144,11 @@ export async function speak(text, callback) {
     currentAudio = audio
     audio.onended = () => {
       currentAudio = null
-      callback?.()
+      onDone()
     }
     audio.onerror = () => {
       currentAudio = null
-      callback?.()
+      onDone()
     }
     await audio.play()
   } catch (e) {
@@ -128,7 +158,8 @@ export async function speak(text, callback) {
     u.lang = 'fr-FR'
     u.rate = 0.85
     u.pitch = 1.1
-    u.onend = callback || null
+    u.onend = onDone
+    u.onerror = onDone
     speechSynthesis.cancel()
     speechSynthesis.speak(u)
   }

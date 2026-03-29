@@ -19,7 +19,7 @@ A chaque ouverture de l'app,  le compteur "nombre de questions" et "score se rem
 - NETLIFY + https://dancing-khapse-23b273.netlify.app/
 - npm run build pour 
 ( Etape 1 : npm run build transforme ton code React en simples fichiers HTML/CSS/JS (dans un dossier dist/)                                                       
-                                                                                                                                                         
+ - npm run dev pour lancer localement                                                                                                                                                        
   Etape 2 : tu deposes ces fichiers sur un service d'hebergement gratuit. Le plus simple :                                                                        
 
   - Netlify : tu glisses-deposes le dossier dist/ sur netlify.com et tu obtiens une URL du type decouverte-alba.netlify.app - gratuit, zero config

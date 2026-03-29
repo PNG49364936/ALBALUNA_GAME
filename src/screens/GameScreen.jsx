@@ -51,10 +51,49 @@ function normalize(str) {
   return str.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 }
 
+function levenshtein(a, b) {
+  const m = a.length, n = b.length
+  const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0))
+  for (let i = 0; i <= m; i++) dp[i][0] = i
+  for (let j = 0; j <= n; j++) dp[0][j] = j
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1])
+    }
+  }
+  return dp[m][n]
+}
+
+function extractWords(str) {
+  return normalize(str).split(/\s+/).filter(w => w.length > 0)
+}
+
 function checkAnswer(transcript, item) {
   const clean = normalize(transcript)
   const allAccepted = [item.name, ...(item.alt || [])].map(normalize)
-  return allAccepted.some(a => clean.includes(a))
+
+  // Match exacte (inclus dans la transcription)
+  if (allAccepted.some(a => clean.includes(a))) return true
+
+  // Tolérance Levenshtein : on compare chaque mot de la transcription
+  // avec chaque variante acceptée (mot principal seulement, pas les articles)
+  const spokenWords = extractWords(transcript)
+  const targetWords = [normalize(item.name), ...(item.alt || []).map(normalize)]
+    .flatMap(a => a.split(/\s+/))
+    .filter(w => w.length >= 3 && !['le', 'la', 'un', 'une', 'les', 'des', 'du'].includes(w))
+  const uniqueTargets = [...new Set(targetWords)]
+
+  for (const spoken of spokenWords) {
+    if (spoken.length < 3) continue
+    for (const target of uniqueTargets) {
+      const maxDist = target.length <= 5 ? 1 : 2
+      if (levenshtein(spoken, target) <= maxDist) return true
+    }
+  }
+
+  return false
 }
 
 export default function GameScreen({ category, onBack }) {
